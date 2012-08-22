@@ -1,0 +1,53 @@
+body {
+	font-family: Arial, Verdana, sans-serif,;
+	background-color: #66FFCC;
+}
+
+a {
+	color: white;
+}
+
+h1{
+	font-family: Arial, Verdana, sans-serif;
+	color: black;
+	font-size: 400%;
+	text-transform: lowercase;
+}
+
+h2{
+	font-family: Arial, Verdana, sans-serif;
+	color: black;
+	font-size: 200%;
+	text-transform: lowercase;
+}
+
+div {
+	padding: 15x 15x 15x 15x;
+	border: 3px solid #669999;
+	font-size: 200%;
+	background-color: white;
+	width: 90%;
+}
+
+input {
+	padding: 6x 12x 6x 12x;
+	border: 1px solid #666666;
+	color: #666666;
+	font-size: 120%;
+}
+
+input.submit:hover {
+	background-color: #666666;
+}
+
+input.submit:active {
+	background-color: #666666;
+}
+
+input.text {
+	color: #666666;
+}
+
+input.text:focus {
+	color: #666666;
+}

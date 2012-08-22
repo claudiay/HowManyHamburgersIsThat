@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+        <meta charset="utf-8" />
+        <title>Hamburgers and Hipsters</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="description" content="hamburgers and hipsters" />
+        <!-- User Names here so we can brag later -->
+        <meta name="author" content="Jon-Carlos Rivera, xith, a_pack_of_dogs, Jessica, thaddius, and other anonymous users" />
+        <!-- Le styles -->
+		<link type="text/css" rel="stylesheet" media="all" href="style.css">
+   
+</head>
+<body>
+	
+<h1>
+About to spend money?
+</h1>
+<h2>
+Type it in here to get a visual intuition for how much you are spending!
+</h2>
+
+<form id="form">
+	<center><h2>
+        <label for="money">Money: $<input type="text" id="money" name="money" maxlength="9" /></label><br />
+
+<!-- Add more fun things people could spend money on! -->
+
+        <label><input data-price="2.58" data-image="http://i.imgur.com/m8j5B.jpg" type="radio" name="product" id="product" value="hamburgers" />Hamburgers</label><br />
+        <label><input data-price="200" data-image="http://i.imgur.com/tJ8GM.jpg" type="radio" name="product" id="product" value="jackets" />Leather Jackets</label><br />
+        <label><input data-price="1099" data-image="http://i.imgur.com/9PCvc.jpg" type="radio" name="product" id="product" value="macbooks" />MacBooks</label><br />
+        <label><input data-price="16000" data-image="http://i.imgur.com/wftFd.jpg" type="radio" name="product" id="product" value="cars" />Cars</label>
+
+	</center></h2>
+</form>
+
+<center>
+<div id="result"></div>
+</center>
+
+<p>Made by Reddit! - <a href="http://sync.in/hamburgers">Edit the source code here</a> <a href="http://sync.in/ep/pad/view/hamburgers/latest">(or press play and watch here)</a>
+</body>
+<script>
+        function getQueryParams() {
+                var vars = window.location.search.substring(1).split('&');
+                var params = {};
+                for (var i = 0; i < vars.length; i++) {
+                        var pair = vars[i].split('=');
+                        params[pair[0]] = unescape(pair[1]);
+                }
+                return params;
+        }
+        function serializeForm(form) {
+                var params = [];
+                for (var i = 0; i < form.elements.length; i++) {
+                        var el = form.elements[i];
+                        if (el.type === 'text' || el.checked) {
+                                params.push(el.name + '=' + el.value);
+                        }
+                }
+                return params;
+        }
+
+        function formatMoney(n, c, d, t){
+                var c = isNaN(c = Math.abs(c)) ? 2 : c,
+                d = d == undefined ? "." : d,
+                t = t == undefined ? "," : t,
+                s = n < 0 ? "-" : "",
+                i = parseInt(n = Math.abs(+n || 0).toFixed(c)) + "",
+                j = (j = i.length) > 3 ? j % 3 : 0;
+                return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
+        }
+
+        (function () {
+                var form = document.getElementById("form");
+                var result = document.getElementById("result");
+                var product_images = preloadImages(form.product);
+
+                initializeForm(form);
+
+                function preloadImages(radios){
+                        var len = radios.length;
+                        var imgs = {};
+                        while (len--) {
+                                var good = radios[len].value;
+                                imgs[good] = document.createElement('img');
+                                imgs[good].src = radios[len].attributes["data-image"].value;
+                        }
+                        return imgs;
+                }
+
+                function initializeForm(form){
+                        var params = getQueryParams();
+                        form.money.value = params.money || '0';
+                        var radios = form.product;
+                        var len = radios.length;
+                        while (len--) {
+                                if (radios[len].value === params.product) radios[len].checked = true;
+                                radios[len].onchange = onFormChanged;
+                        }
+                        form.money.onkeyup = onFormChanged;
+                        onFormChanged();
+                }
+
+                function getCheckedRadio(radios) {
+                        var len = radios.length;
+                        while (len--) if (radios[len].checked) return radios[len];
+                }
+
+                function onFormChanged() {
+                        var radio = getCheckedRadio(form.product);
+                        if (!radio) return;
+
+                        var type      = radio.value;
+                        var price     = parseFloat(radio.attributes["data-price"].value);
+                        var money     = parseFloat(form.money.value);
+                        var amount    = Math.floor(money / price);
+                        var remaining = Math.round((money - amount * price) * 100) / 100;
+
+                        if (amount > 9999) {
+                                result.innerHTML = '<br />Too many!';
+                        } else if (amount < 1) {
+                                result.innerHTML = '<br />None!';
+                        } else {
+                                result.innerHTML = '<br />Money remaining: $' + formatMoney(remaining) + ' <br />';
+                                var d = document.createDocumentFragment();
+                                while (amount--) d.appendChild(product_images[type].cloneNode(false));
+                                result.appendChild(d);
+                        }
+                        var query = '?' + serializeForm(form).join('&');
+                        if (query !== window.location.search) {
+                                history.replaceState({}, null, query);
+                        }
+                }
+        }());
+</script>
+
+</html>
